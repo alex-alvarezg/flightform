@@ -1,0 +1,48 @@
+version: "3"
+services:
+  frontend:
+    image:  localhost:5000/flightform-frontend:1.0
+    ports:
+      - "80:80" 
+    depends_on:
+      backend:
+        condition: service_started
+  backend:
+    image:  localhost:5000/flightform-backend:1.0
+    ports:
+      - "9090:9090"
+    depends_on:
+      database:
+        condition: service_started
+    environment:
+      - FLIGHTFORM_JDBC_URL=jdbc:postgresql://database:5432/flightform
+  python:
+    image: localhost:5000/flightform-python:1.0
+    depends_on:
+      database:
+        condition: service_started    
+  database:
+    image: localhost:5000/flightform-db:1.0
+    ports:
+      - "5432:5432"
+    env_file:
+      - database.env # configure postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+  pgadmin:
+    image: dpage/pgadmin4:4.18
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@flightform.space
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "1111:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "database:pgsql-server"
+ 
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
+  pgadmin-data:
