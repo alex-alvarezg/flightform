@@ -30,19 +30,28 @@ services:
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
   pgadmin:
-    image: dpage/pgadmin4:4.18
-    restart: always
+    image: dpage/pgadmin4:4.28
+  #  restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@flightform.space
-      PGADMIN_DEFAULT_PASSWORD: secret
-      PGADMIN_LISTEN_PORT: 80
+      - PGADMIN_DEFAULT_EMAIL=info@flightform.space
+      - PGADMIN_DEFAULT_PASSWORD=secret
+      - PGADMIN_LISTEN_PORT=80
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
+      - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
     ports:
       - "1111:80"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+      - type: bind
+        source: $HOST/Users/d064392/SAPDevelop/flightform/localdev
+        target: /container/location
     links:
       - "database:pgsql-server"
- 
+   # tty: true
+# delete the volume if you forget the pwd (with data loss)   
+ # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+ # http://localhost:1111/browser/
+ # Connect to DB with system IP address and not localhost:5432
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
   pgadmin-data:

@@ -26,4 +26,6 @@ GRANT ALL ON DATABASE flightform TO flightform;
 
 GRANT TEMPORARY, CONNECT ON DATABASE flightform TO PUBLIC;
 
+CREATE EXTENSION postgis;
+
 
